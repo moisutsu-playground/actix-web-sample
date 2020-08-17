@@ -1,3 +1,3 @@
-mod hello_world;
+mod common;
 
-pub use hello_world::*;
+pub use common::*;

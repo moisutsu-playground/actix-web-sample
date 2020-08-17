@@ -1,21 +1,34 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware, App, HttpResponse, HttpServer, Responder};
+use anyhow::Result;
+use dotenv::dotenv;
 use listenfd::ListenFd;
 
-#[get("/world")]
+use std::env;
+
+#[get("/")]
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
 #[actix_rt::main]
-async fn main() -> std::io::Result<()> {
-    let mut listenfd = ListenFd::from_env();
-    let mut server = HttpServer::new(|| App::new().service(web::scope("/hello").service(index)));
+async fn main() -> Result<()> {
+    dotenv()?;
 
-    server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
+    let mut listenfd = ListenFd::from_env();
+    let mut server = HttpServer::new(|| {
+        App::new()
+            .service(index)
+            .wrap(middleware::Logger::default())
+    });
+
+    env_logger::init();
+
+    server = if let Some(l) = listenfd.take_tcp_listener(0)? {
         server.listen(l)?
     } else {
-        server.bind("127.0.0.1:3000")?
+        server.bind(format!("{}:{}", env::var("HOST")?, env::var("PORT")?))?
     };
 
-    server.run().await
+    server.run().await?;
+    Ok(())
 }

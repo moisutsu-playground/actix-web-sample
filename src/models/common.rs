@@ -12,3 +12,9 @@ pub struct Add {
     pub a: i32,
     pub b: i32,
 }
+
+#[derive(Deserialize)]
+pub struct Sub {
+    pub a: i32,
+    pub b: i32,
+}

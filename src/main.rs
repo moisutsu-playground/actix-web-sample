@@ -17,6 +17,7 @@ async fn main() -> Result<()> {
             .service(handlers::hello)
             .service(handlers::user_id)
             .service(handlers::add)
+            .service(handlers::sub)
             .wrap(middleware::Logger::default())
     });
 

@@ -1,4 +1,4 @@
-use actix_web::{get, middleware, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
 use anyhow::Result;
 use dotenv::dotenv;
 use listenfd::ListenFd;
@@ -10,12 +10,14 @@ use std::env;
 #[derive(Serialize)]
 struct HelloWorld {
     hello: String,
+    name: String,
 }
 
-#[get("/")]
-async fn index() -> impl Responder {
+#[get("/{user}")]
+async fn index(info: web::Path<String>) -> impl Responder {
     HttpResponse::Ok().json(HelloWorld {
         hello: "world".to_string(),
+        name: info.to_string(),
     })
 }
 

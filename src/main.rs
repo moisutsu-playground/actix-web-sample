@@ -1,32 +1,11 @@
-use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware, App, HttpServer};
 use anyhow::Result;
 use dotenv::dotenv;
 use listenfd::ListenFd;
 
-use serde::Serialize;
-
 use std::env;
 
-#[derive(Serialize)]
-struct HelloWorld {
-    hello: String,
-    name: String,
-    id: u32,
-}
-
-#[get("/{user}/{id}")]
-async fn user_id(info: web::Path<(String, u32)>) -> impl Responder {
-    HttpResponse::Ok().json(HelloWorld {
-        hello: "world".to_string(),
-        name: info.0.to_string(),
-        id: info.1,
-    })
-}
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello World!")
-}
+use actix_web_sample::handlers;
 
 #[actix_rt::main]
 async fn main() -> Result<()> {
@@ -35,8 +14,8 @@ async fn main() -> Result<()> {
     let mut listenfd = ListenFd::from_env();
     let mut server = HttpServer::new(|| {
         App::new()
-            .service(hello)
-            .service(user_id)
+            .service(handlers::hello)
+            .service(handlers::user_id)
             .wrap(middleware::Logger::default())
     });
 

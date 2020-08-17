@@ -11,14 +11,21 @@ use std::env;
 struct HelloWorld {
     hello: String,
     name: String,
+    id: u32,
 }
 
-#[get("/{user}")]
-async fn index(info: web::Path<String>) -> impl Responder {
+#[get("/{user}/{id}")]
+async fn user_id(info: web::Path<(String, u32)>) -> impl Responder {
     HttpResponse::Ok().json(HelloWorld {
         hello: "world".to_string(),
-        name: info.to_string(),
+        name: info.0.to_string(),
+        id: info.1,
     })
+}
+
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello World!")
 }
 
 #[actix_rt::main]
@@ -28,7 +35,8 @@ async fn main() -> Result<()> {
     let mut listenfd = ListenFd::from_env();
     let mut server = HttpServer::new(|| {
         App::new()
-            .service(index)
+            .service(hello)
+            .service(user_id)
             .wrap(middleware::Logger::default())
     });
 

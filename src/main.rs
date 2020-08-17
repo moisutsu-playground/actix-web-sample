@@ -3,11 +3,20 @@ use anyhow::Result;
 use dotenv::dotenv;
 use listenfd::ListenFd;
 
+use serde::Serialize;
+
 use std::env;
+
+#[derive(Serialize)]
+struct HelloWorld {
+    hello: String,
+}
 
 #[get("/")]
 async fn index() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+    HttpResponse::Ok().json(HelloWorld {
+        hello: "world".to_string(),
+    })
 }
 
 #[actix_rt::main]

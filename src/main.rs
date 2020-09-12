@@ -7,7 +7,7 @@ use std::env;
 
 use actix_web_sample::handlers;
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> Result<()> {
     dotenv()?;
 

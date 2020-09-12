@@ -2,11 +2,11 @@ use crate::models::{Add, HelloWorld, Sub};
 use actix_web::{get, web::Path, web::Query, HttpResponse, Responder};
 
 #[get("/{user}/{id}")]
-async fn user_id(info: Path<(String, u32)>) -> impl Responder {
+async fn user_id(Path((user, id)): Path<(String, u32)>) -> impl Responder {
     HttpResponse::Ok().json(HelloWorld {
         hello: "world".to_string(),
-        name: info.0.to_string(),
-        id: info.1,
+        name: user,
+        id: id,
     })
 }
 
